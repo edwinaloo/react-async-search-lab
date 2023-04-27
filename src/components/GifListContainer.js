@@ -4,34 +4,39 @@ import GifSearch from "./GifSearch";
 
 function GifListContainer() {
   const [gifs, setGifs] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    fetchGifs("YOUR_API_KEY");
-  }, []);
+    if (searchTerm) {
+      fetchGifs();
+    }
+  }, [searchTerm]);
 
-  const fetchGifs = (apiKey) => {
-    const url = `https://api.giphy.com/v1/gifs/trending?api_key=${apiKey}&limit=3`;
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        const gifsData = data.data;
-        setGifs(gifsData);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+  const fetchGifs = async () => {
+    try {
+      const apiKey = "YOUR_API_KEY";
+      const url = `https://api.giphy.com/v1/gifs/search?q=${searchTerm}&api_key=${apiKey}&rating=g`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      const gifsData = data.data.slice(0, 3);
+      setGifs(gifsData);
+    } catch (error) {
+      console.error("Error fetching GIFs:", error);
+    }
   };
 
-  const handleSubmit = (searchTerm) => {
-    fetchGifs("YOUR_API_KEY");
+  const handleSearchSubmit = (searchTerm) => {
+    setSearchTerm(searchTerm);
   };
 
   return (
     <div>
-      <GifSearch onSubmit={handleSubmit} />
+      <GifSearch onSubmit={handleSearchSubmit} />
       <GifList gifs={gifs} />
     </div>
   );
 }
 
 export default GifListContainer;
+
