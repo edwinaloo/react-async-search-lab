@@ -28,3 +28,4 @@ function GifSearch({ onSubmit }) {
 }
 
 export default GifSearch;
+
